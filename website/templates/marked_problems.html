@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+
+<br><br>
+{% if problems %}
+<table class="table table-striped">
+{% for problem in problems %}
+	{% include "_problem.html" %}
+{% endfor %}
+</table>
+{% endif %}
+
+{% endblock %}
