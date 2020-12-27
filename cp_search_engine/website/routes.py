@@ -112,6 +112,8 @@ def user(username):
 @app.route('/user/<username>/result/<query>', methods=['GET', 'POST'])
 @login_required
 def result(username, query):
+    per_page = app.config['POSTS_PER_PAGE']
+
     form = SearchForm()
     user = User.query.filter_by(username=username).first()
     query__ = query
@@ -120,17 +122,21 @@ def result(username, query):
         new_query = form.query.data
         return redirect(url_for('result', username=username, query=new_query))
 
-     
+
     cur_page = request.args.get('page', 1, type=int)
-    problems_, total = Problem.search(query__, 1, len(Problem.query.all()))
-    problems = paginate(problems_.all(), cur_page, 10)
-    last_page = math.ceil(len(problems_.all())/10)
+    #problems_, total = Problem.search(query__, 1, len(Problem.query.all()))
+    problems_, total = Problem.search(query__, cur_page, per_page)
+    problems = problems_.all()
+    #problems = paginate(pp, cur_page, per_page)
+    last_page = math.ceil(len(problems) / per_page)
     
     next_url = url_for('result', username=user.username, page=cur_page+1, query=query__) \
-        if cur_page < last_page else None
+        if total > cur_page*per_page else None
+
     prev_url = url_for('result', username=user.username, page=cur_page-1, query=query__) \
         if cur_page > 1 else None
     return render_template('user_result.html', user=user, form=form, problems=problems, next_url=next_url, prev_url=prev_url)
+
    
 
 @app.route('/user/<username>/marked_problems')
