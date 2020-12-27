@@ -27,7 +27,6 @@ def home():
     return render_template('home.html', form=form)
 
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -47,7 +46,6 @@ def login():
     return render_template('login.html', title='Sign In', form=form)
 
 
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -61,7 +59,6 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
-
 
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
@@ -94,8 +91,6 @@ def reset_password(token):
     return render_template('reset_password.html', form=form)
 
 
-
-
 @app.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
@@ -108,36 +103,31 @@ def user(username):
     return render_template('user.html', user=user, form=form)
 
 
-
 @app.route('/user/<username>/result/<query>', methods=['GET', 'POST'])
 @login_required
 def result(username, query):
-    per_page = app.config['POSTS_PER_PAGE']
+    problems_per_page = app.config['POSTS_PER_PAGE']
 
     form = SearchForm()
     user = User.query.filter_by(username=username).first()
-    query__ = query
+    q = query
 
     if form.validate_on_submit():
-        new_query = form.query.data
-        return redirect(url_for('result', username=username, query=new_query))
-
+        q = form.query.data
+        return redirect(url_for('result', username=username, query=q))
 
     cur_page = request.args.get('page', 1, type=int)
-    #problems_, total = Problem.search(query__, 1, len(Problem.query.all()))
-    problems_, total = Problem.search(query__, cur_page, per_page)
+    problems_, total = Problem.search(q, cur_page, problems_per_page)
     problems = problems_.all()
-    #problems = paginate(pp, cur_page, per_page)
     last_page = math.ceil(len(problems) / per_page)
     
     next_url = url_for('result', username=user.username, page=cur_page+1, query=query__) \
-        if total > cur_page*per_page else None
+        if total > cur_page * problems_per_page else None
 
     prev_url = url_for('result', username=user.username, page=cur_page-1, query=query__) \
         if cur_page > 1 else None
     return render_template('user_result.html', user=user, form=form, problems=problems, next_url=next_url, prev_url=prev_url)
 
-   
 
 @app.route('/user/<username>/marked_problems')
 @login_required
@@ -145,7 +135,6 @@ def marked_problems(username):
     user = User.query.filter_by(username=username).first_or_404()
     problems = user.marked_problems.all()
     form = EmptyForm()
-
     return render_template('marked_problems.html', user=user, problems=problems, form=form)
 
 
@@ -190,6 +179,3 @@ def logout():
 def about():
     return render_template('about.html')
 
-@app.route('/json')
-def json():
-    return render_template('json.html')

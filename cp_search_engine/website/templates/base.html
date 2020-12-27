@@ -1,6 +1,5 @@
 {% extends 'bootstrap/base.html' %}
 
-
 {% block title %}
 	{% if title %}
 		{{ title }} - A20J
@@ -12,11 +11,6 @@
 {% block navbar %}
 	 <nav class="navbar navbar-inverse" style="width: 100%;">
 	 	<div class="container-fluid">
-	 	<!--
-	 	<div class="navbar-header">
-      		<a class="navbar-brand" href="#">CP_SEARCH</a>
-    	</div>
-    -->
 	 	<ul class="nav navbar-nav col-lg-5">
 			<li> <a href="{{ url_for('home') }}">HOME</a> </li>
 			{% if not current_user.is_anonymous %}
@@ -35,7 +29,6 @@
 	</div>
 	</nav>
 {% endblock %}
-
 
 {% block content %}
 	<div class="container">
