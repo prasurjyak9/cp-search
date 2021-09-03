@@ -1,3 +1,8 @@
+# CP Search
+
+A website to help search competitive programming questions using relevant search queries.
+Features include marking and unmarking problems.
+
 Installation:-
 
 # Flask and related compoments
